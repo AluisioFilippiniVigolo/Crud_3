@@ -1,0 +1,17 @@
+program CRUD;
+
+uses
+  Forms,
+  DM in 'DM.pas' {DataModule1: TDataModule},
+  UProdutos in 'UProdutos.pas' {frmProdutos},
+  UProduto in 'UProduto.pas' {Form1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TfrmProdutos, frmProdutos);
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

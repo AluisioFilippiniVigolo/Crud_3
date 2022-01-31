@@ -1,0 +1,177 @@
+unit UProduto;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, DBCtrls, DB, Mask, DBTables;
+
+type
+  TfrmProdutos = class(TForm)
+    tblProdutos: TTable;
+    strngfldProdutosPROCOD: TStringField;
+    strngfldProdutosPRODESCRICAO: TStringField;
+    tblProdutosPROGRUPO: TSmallintField;
+    tblProdutosPROMARCA: TSmallintField;
+    tblProdutosPRODEPTO: TSmallintField;
+    lbl1: TLabel;
+    dbedtPROCOD: TDBEdit;
+    dts1: TDataSource;
+    lbl2: TLabel;
+    dbedtPRODESCRICAO: TDBEdit;
+    lbl3: TLabel;
+    dbedtPROGRUPO: TDBEdit;
+    lbl4: TLabel;
+    dbedtPROMARCA: TDBEdit;
+    lbl5: TLabel;
+    dbedtPRODEPTO: TDBEdit;
+    lblProdutos: TLabel;
+    dbnvgr1: TDBNavigator;
+    btnAdicionar: TButton;
+    btnAlterar: TButton;
+    btnExcluir: TButton;
+    btnSalvar: TButton;
+    btnCancelar: TButton;
+    tblMarca: TTable;
+    tblGrupo: TTable;
+    tblDepto: TTable;
+    strngfldGrupoGRPNOME: TStringField;
+    strngfldMarcaMARNOME: TStringField;
+    strngfldDeptoDEPNOME: TStringField;
+    tblGrupoGRPCOD: TSmallintField;
+    tblMarcaMARCOD: TSmallintField;
+    tblDeptoDEPCOD: TSmallintField;
+    dtsGrupo: TDataSource;
+    dtsMarca: TDataSource;
+    dtsDepto: TDataSource;
+    dbedtGrupo: TDBEdit;
+    dbedtMarca: TDBEdit;
+    dbedtDepto: TDBEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure dbnvgr1Click(Sender: TObject; Button: TNavigateBtn);
+    procedure dbedtPROGRUPOExit(Sender: TObject);
+    procedure dbedtPROMARCAExit(Sender: TObject);
+    procedure dbedtPRODEPTOExit(Sender: TObject);
+    procedure btnAdicionarClick(Sender: TObject);
+    procedure btnAlterarClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+  private
+    procedure PreencherNomeGrupo();
+    procedure PreencherNomeMarca();
+    procedure PreencherNomeDepto();
+    procedure PreencherCampos();
+    procedure HabilitarGrupoDeBotoesEsquerdo(AHabilitar: Boolean);
+    procedure HabilitarFormulario(AHabilitar: Boolean);
+  public
+    { Public declarations }
+  end;
+
+var
+  frmProdutos: TfrmProdutos;
+
+implementation
+
+{$R *.dfm}
+
+
+
+procedure TfrmProdutos.dbnvgr1Click(Sender: TObject; Button: TNavigateBtn);
+begin
+  PreencherCampos();
+end;
+
+procedure TfrmProdutos.FormCreate(Sender: TObject);
+begin
+  PreencherCampos();
+  HabilitarGrupoDeBotoesEsquerdo(True);
+  HabilitarFormulario(False);
+end;
+
+procedure TfrmProdutos.PreencherCampos();
+begin
+  PreencherNomeGrupo();
+  PreencherNomeMarca();
+  PreencherNomeDepto();
+end;
+
+procedure TfrmProdutos.PreencherNomeDepto();
+begin
+  if(IntToStr(tblProdutosPRODEPTO.AsInteger) = EmptyStr) then
+    Exit;
+  if(not tblDepto.Locate('DEPCOD' , tblProdutosPRODEPTO.AsInteger, [])) then
+    raise Exception.CreateFmt('Departamento "%s" não localizado.', [IntToStr(tblProdutosPRODEPTO.AsInteger)]);
+  //edtDepto.Text := strngfldDeptoDEPNOME.AsString;
+end;
+
+procedure TfrmProdutos.PreencherNomeGrupo();
+begin
+  if(dbedtPROGRUPO.Text = EmptyStr) then
+    Exit;
+  if(not tblGrupo.Locate('GRPCOD', dbedtPROGRUPO.Text, [])) then
+    raise Exception.CreateFmt('Grupo "%s" não localizado.', [dbedtPROGRUPO.Text]);
+  //edtGrupo.Text :=  strngfldGrupoGRPNOME.AsString;
+end;
+
+procedure TfrmProdutos.PreencherNomeMarca();
+begin
+  if(dbedtPROMARCA.Text = EmptyStr) then
+    Exit;
+  if(not tblMarca.Locate('MARCOD', dbedtPROMARCA.Text, [])) then
+    raise Exception.CreateFmt('Marca "%s" não localizada', [dbedtPROMARCA.Text]);
+  //edtMarca.Text :=  strngfldMarcaMARNOME.AsString;
+end;
+
+procedure TfrmProdutos.dbedtPROGRUPOExit(Sender: TObject);
+begin
+  PreencherNomeGrupo();
+end;
+
+procedure TfrmProdutos.dbedtPROMARCAExit(Sender: TObject);
+begin
+  PreencherNomeGrupo();
+end;
+
+procedure TfrmProdutos.dbedtPRODEPTOExit(Sender: TObject);
+begin
+  PreencherNomeMarca();
+end;
+
+procedure TfrmProdutos.HabilitarGrupoDeBotoesEsquerdo(AHabilitar: Boolean);
+begin
+  btnAdicionar.Enabled := AHabilitar;
+  btnAlterar.Enabled := AHabilitar;
+  btnExcluir.Enabled := AHabilitar;
+  btnSalvar.Enabled := not(AHabilitar);
+  btnCancelar.Enabled := not(AHabilitar);
+end;
+
+procedure TfrmProdutos.HabilitarFormulario(AHabilitar: Boolean);
+begin
+  dbedtPROCOD.Enabled := False;
+  dbedtPRODESCRICAO.Enabled := AHabilitar;
+  dbedtPROGRUPO.Enabled := AHabilitar;
+  dbedtGrupo.Enabled := AHabilitar;
+  dbedtPROMARCA.Enabled := AHabilitar;
+  dbedtMarca.Enabled := AHabilitar;
+  dbedtPRODEPTO.Enabled := AHabilitar;
+  dbedtDepto.Enabled := AHabilitar;
+end;
+
+procedure TfrmProdutos.btnAdicionarClick(Sender: TObject);
+begin
+  HabilitarGrupoDeBotoesEsquerdo(False);
+  HabilitarFormulario(True);
+end;
+
+procedure TfrmProdutos.btnAlterarClick(Sender: TObject);
+begin
+  HabilitarGrupoDeBotoesEsquerdo(False);
+  HabilitarFormulario(True);
+end;
+
+procedure TfrmProdutos.btnExcluirClick(Sender: TObject);
+begin
+  HabilitarGrupoDeBotoesEsquerdo(False);
+end;
+
+end.
